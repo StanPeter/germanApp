@@ -1,12 +1,18 @@
 from PIL import ImageTk, Image           #ALL LIBRARIES
 import tkinter as tk
 import datetime, random
-import openpyxl as op
 import requests
 from io import BytesIO
+import mysql.connector
+from db import db
 
-#1. connect with mySQL
-#7. that's all together new version 0.4
+#connection for MySQL
+mydb = mysql.connector.connect(
+    host = db["host"],
+    user = db["user"],
+    passwd = db["password"]
+)
+print(mydb)
 
 now = datetime.date.today()
 
