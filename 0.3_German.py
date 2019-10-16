@@ -2,12 +2,10 @@ from PIL import ImageTk, Image           #ALL LIBRARIES
 import tkinter as tk
 import datetime, random
 import openpyxl as op
-import requests, pymysql
+import requests
 from io import BytesIO
 
 #1. connect with mySQL
-#6. put requirements folder
-
 #7. that's all together new version 0.4
 
 now = datetime.date.today()

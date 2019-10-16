@@ -1,10 +1,10 @@
-#!/home/stan05/Documents/Main/1-programation/german_app/env/bin/python
+#!/home/stan05/Desktop/backup11.10.2019/german_app/env/bin/python
 
 # -*- coding: utf-8 -*-
 import re
 import sys
 
-from pip import main
+from pip._internal.main import main
 
 if __name__ == '__main__':
     sys.argv[0] = re.sub(r'(-script\.pyw?|\.exe)?$', '', sys.argv[0])
