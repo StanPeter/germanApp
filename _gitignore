@@ -9,7 +9,7 @@ __pycache__/
 # Distribution / packaging
 .Python
 database.ods
-*env
+env/
 build/
 develop-eggs/
 dist/
