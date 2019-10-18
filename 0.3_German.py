@@ -11,19 +11,41 @@ from db import db
 mydb = mysql.connector.connect(
     host = db["host"],
     user = db["user"],
-    passwd = db["password"]
+    passwd = db["password"],
+    database = "germanApp"
 )
-print(mydb)
 
-now = datetime.date.today()
+mycursor = mydb.cursor()
 
 file_name = 'database.xlsx'
 wb = op.load_workbook(file_name)            #loading from xlsx document
 work_sheet = wb['Work_Sheet']
+
+"""
+#migration to SQL Database
+skipped = 0
+
+for i in range(2, work_sheet.max_row):
+    if work_sheet.cell(row=i, column=1).value is not None:
+
+        sql = "INSERT INTO phrases(name, practisedOn, days) VALUES(%s, %s, %s)"
+        data = (str(work_sheet.cell(row=i, column=1).value), "2019-10-17", 0)
+
+        mycursor.execute(sql, data)
+        mydb.commit()
+    
+        print("done" + str(i))
+    else:
+        skipped += 1
+        print("skipped")
+
+print(skipped)
+"""
+
 rows_num = work_sheet.max_row
 
 phrase_generator_list = []                  #used to prevent in repeating the same phrases
-phrases_counter = 1                          #tracks how many phrases left, set on 1 because of excel start position on 2
+phrases_counter = 1                         #tracks how many phrases left, set on 1 because of excel start position on 2
 no_button_counter = 0                       #not used yet
 yes_button_counter = 0                      #not used yet
 anti_repeat = False                         #prevents yes/no button spamming
@@ -31,6 +53,7 @@ yes_score = 0
 no_score = 0
 yes_img_list = []                           #not used yet --> next version
 no_img_list = []                            #not used yet
+
 
 img_yes_url = requests.get('https://www.derjogger.de/wp-content/uploads/2016/03/Zitat-zu-Ausdauer-Aussehen-und-Sport.png')
 img_yes = Image.open(BytesIO(img_yes_url.content))
