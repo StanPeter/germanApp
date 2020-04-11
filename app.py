@@ -2,12 +2,24 @@ from PIL import ImageTk, Image           #ALL LIBRARIES
 import tkinter as tk
 import datetime, random
 import openpyxl as op
-import requests, pymysql
+import requests
 from io import BytesIO
+import mysql.connector
+
+
+db = mysql.connector.connect(
+    host="localhost",
+    user="stan",
+    passwd='qw12QW!"',
+    database="germanApp"
+)
+
+db_cursor = db.cursor()
+
 
 #1. connect with mySQL
-#6. put requirements folder
-
+#have more sql versions for public / private
+#
 #7. that's all together new version 0.4
 
 now = datetime.date.today()
@@ -17,6 +29,20 @@ wb = op.load_workbook(file_name)            #loading from xlsx document
 work_sheet = wb['Work_Sheet']
 rows_num = work_sheet.max_row
 
+#mysql> create table phrases(id int not null auto_increment, phrase varchar(250), date datetime, primary key(id));
+
+def insert_data(): #just to pass data from .xlsx file to mysql database
+    for row in range(2, rows_num + 1):
+        phrase = work_sheet.cell(row=row, column=1).value
+        val = (str(phrase), 0)
+
+        sql = "INSERT INTO phrases(phrase, frequency) VALUES(%s, %s)"
+
+        db_cursor.execute(sql, val)
+        print(row)
+        db.commit()
+
+
 phrase_generator_list = []                  #used to prevent in repeating the same phrases
 phrases_counter = 1                          #tracks how many phrases left, set on 1 because of excel start position on 2
 no_button_counter = 0                       #not used yet
@@ -24,8 +50,6 @@ yes_button_counter = 0                      #not used yet
 anti_repeat = False                         #prevents yes/no button spamming
 yes_score = 0
 no_score = 0
-yes_img_list = []                           #not used yet --> next version
-no_img_list = []                            #not used yet
 
 img_yes_url = requests.get('https://www.derjogger.de/wp-content/uploads/2016/03/Zitat-zu-Ausdauer-Aussehen-und-Sport.png')
 img_yes = Image.open(BytesIO(img_yes_url.content))
@@ -40,9 +64,13 @@ img_bg= Image.open(BytesIO(img_bg_url.content))
 
 def pick_a_phrase(none):
     global anti_repeat, phrases_counter
+    phrase_text = work_sheet.cell(row=n, column=1).value
+    phrase_frequency = work_sheet.cell(row=n, column=5).value
+    phrase_date = work_sheet.cell(row=n, column=3).value
+
     def yes_button():
         global anti_repeat, yes_score
-        if anti_repeat == False:            #prevents YES button spamming with anti_repeat Boolean
+        if anti_repeat is False:            #prevents YES button spamming with anti_repeat Boolean
             anti_repeat = True
             work_sheet.cell(row=n, column=5).value = work_sheet.cell(row=n, column=5).value * 2
             yes_score += 1
@@ -173,7 +201,7 @@ def pick_a_phrase(none):
             #print('r')
             continue
 
-#TKINTER GRAPHICS GUY FOR THE APP
+#TKINTER GUI FOR THE APP
 root = tk.Tk()
 root.geometry('1000x500')
 root.configure(background='cyan')
@@ -188,8 +216,8 @@ button_pick_a_phrase = tk.Button(text='Pick a phrase', bg='gold', font=(15))
 button_pick_a_phrase.place(x=220, y=150)
 button_pick_a_phrase.bind('<Button-1>', pick_a_phrase)
 
-label_version_02 = tk.Label(text='Version 0.2', font=('arial 10 bold'))
-label_version_02.place(x=900, y=450)
+label_version = tk.Label(text='Version 0.2', font=('arial 10 bold'))
+label_version.place(x=900, y=450)
 
 label_lets_start = tk.Label(master=root, text='LET\'S START', font=('Helvetica', 60, 'bold'), bg='gold')
 label_lets_start.place(x=30, y=10)
