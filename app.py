@@ -64,9 +64,6 @@ img_bg= Image.open(BytesIO(img_bg_url.content))
 
 def pick_a_phrase(none):
     global anti_repeat, phrases_counter
-    phrase_text = work_sheet.cell(row=n, column=1).value
-    phrase_frequency = work_sheet.cell(row=n, column=5).value
-    phrase_date = work_sheet.cell(row=n, column=3).value
 
     def yes_button():
         global anti_repeat, yes_score
