@@ -8,6 +8,7 @@ __pycache__/
 
 # Distribution / packaging
 .env
+log.txt
 trial.py
 db.py
 pycache

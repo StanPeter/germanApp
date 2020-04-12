@@ -24,12 +24,14 @@ db = mysql.connector.connect(
 )
 
 db_cursor = db.cursor()
-db_cursor.execute("select * from phrases where id>10 and id<15")
+db_cursor.execute("select * from phrases where id<13")
 
 all_phrases = db_cursor.fetchall() #(98, 'Sein Geist', None, 0)
 phrases_counter = 1          #tracks how many phrases left, set on 1 because of excel start position on 2
 anti_repeat = False          #prevents yes/no button spamming
 
+yes_score = 0
+no_score = 0
 
 def pick_a_phrase(self):
     global all_phrases, phrases_counter, anti_repeat
@@ -37,6 +39,7 @@ def pick_a_phrase(self):
     
     now_str = str(unformatted_now).split(".")[0]
     now_datetime = datetime.datetime.strptime(now_str, "%Y-%m-%d %H:%M:%S")
+    anti_repeat = False
     
     for index, phrase in enumerate(all_phrases):        
         phrase_id = str(phrase[0])
@@ -50,14 +53,12 @@ def pick_a_phrase(self):
                 sql = "update phrases set date = %s, frequency=1 where id = %s"
                 val = (now_str, phrase_id)
 
-                db_cursor.execute(sql, val)  #if the cell doesnt have any date puts today's date
-                db.commit()
+                # db_cursor.execute(sql, val)  #if the cell doesnt have any date puts today's date
+                # db.commit()
 
                 phrases_counter += 1
                 print(f"{phrase_text} :not Date: {phrase_id}")
             else:
-                print(phrase_date)
-                print(type(phrase_date))
                 date_difference = now_datetime - phrase_date
                 days_difference = date_difference.days #count how many days passed from the last practise
 
@@ -66,8 +67,8 @@ def pick_a_phrase(self):
                     sql = "update phrases set date = %s where id = %s"
                     val = (now_str, phrase_id)
 
-                    db_cursor.execute(sql, val)  #updates date of phrase practising(now)
-                    db.commit()
+                    # db_cursor.execute(sql, val)  #updates date of phrase practising(now)
+                    # db.commit()
 
                     phrases_counter += 1
                     print(f"{phrase_text} :have date and frequency time to practise: {phrase_id}")
@@ -78,7 +79,7 @@ def pick_a_phrase(self):
                     continue #start next iterate
             # pdb.set_trace()
             print(f"{phrase_text} :main_loop: {phrase_id}")
-            GermanGame.pick_phrase_gui(self, phrase_text, yes_funct, no_funct)
+            GermanGame.pick_phrase_gui(self, phrase_text, phrase_id, phrase_frequency, yes_button, no_button, yes_score, no_score)
 
             all_phrases.pop(index)  
             break
@@ -93,11 +94,31 @@ def pick_a_phrase(self):
         return print(all_phrases)
     return print("Finished")
 
-def yes_funct():
-    print("works")
 
-def no_funct():
-    print("works2")
+def yes_button(phrase_id, phrase_frequency):
+    global anti_repeat, yes_score
+
+    if anti_repeat is False:      #prevents YES button spamming with anti_repeat Boolean
+        anti_repeat = True
+        yes_score += 1
+
+        sql = "update phrases set frequency=%s where id=%s"
+        val = (phrase_frequency*2, phrase_id)
+        db_cursor.execute(sql, val)
+        db.commit()
+
+def no_button(phrase_id, phrase_frequency):
+    global anti_repeat, no_score
+    if anti_repeat == False:
+        anti_repeat = True
+        no_score += 1
+
+        if phrase_frequency >= 2:
+            sql = "update phrases set frequency=%s where id=%s"
+            val = (phrase_frequency/2, phrase_id)
+            db_cursor.execute(sql, val)
+            db.commit()
+
 
 root = tk.Tk()
 
@@ -142,9 +163,9 @@ unformatted_now = datetime.datetime.now()
 now_str = str(unformatted_now).split(".")[0]
 now_datetime = datetime.datetime.strptime(now_str, "%Y-%m-%d %H:%M:%S")
 
-sql = "update phrases set date = %s, frequency = 1 where id = %s"
-val = (now_str, 9)
+# sql = "update phrases set date = %s, frequency = 1 where id = %s"
+# val = (now_str, 9)
 
-db_cursor.execute(sql, val)  #if the cell doesnt have any date puts today's date
+# db_cursor.execute(sql, val)  #if the cell doesnt have any date puts today's date
 
 

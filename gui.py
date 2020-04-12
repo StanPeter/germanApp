@@ -50,16 +50,16 @@ class GermanGame:
         root.mainloop
         
     #gui after clicking on PICK_A_PHRASE button
-    def pick_phrase_gui(self, current_phrase, yes, no):
+    def pick_phrase_gui(self, phrase_text, phrase_id, phrase_frequency, yes, no, yes_score, no_score):
         text_phrase = tk.Text(width=40, height=5, bg='light goldenrod')
         text_phrase.place(x=120, y=190)
-        text_phrase.insert(tk.END, current_phrase)
+        text_phrase.insert(tk.END, phrase_text)
 
-        button_yes = tk.Button(text='Yes', font=(15), bg='green', command=yes)
+        button_yes = tk.Button(text='Yes', font=(15), bg='green', command=lambda:yes(phrase_id, phrase_frequency))
         button_yes.place(x=220, y=290)
-        #yes_button.bind('<Up>', yes_button)
+        # button_yes.bind('<Button-1>', lambda: yes(phrase_id))
 
-        button_no = tk.Button(text='No', font=(15), bg='red', command=no)
+        button_no = tk.Button(text='No', font=(15), bg='red', command=lambda:no(phrase_id, phrase_frequency))
         button_no.place(x=300, y=290)
         #no_button.bind('<Button-Down>', no_button)
 
@@ -77,8 +77,50 @@ class GermanGame:
 
         text_yes_score = tk.Text(width=4, heigh=1, bg='green', font=('bold'))
         text_yes_score.place(x=790, y=30)
-        text_yes_score.insert(tk.END, "0")
+        text_yes_score.insert(tk.END, str(yes_score))
 
         text_no_score = tk.Text(width=4, height=1, bg='red', font=('bold'))
         text_no_score.place(x=883, y=30)
-        text_no_score.insert(tk.END, "0")
+        text_no_score.insert(tk.END, str(no_score))
+
+    # def yes_option_gui(self):
+
+
+
+# def yes_button():
+#     global anti_repeat, yes_score
+#     if anti_repeat is False:            #prevents YES button spamming with anti_repeat Boolean
+#         anti_repeat = True
+#         work_sheet.cell(row=n, column=5).value = work_sheet.cell(row=n, column=5).value * 2
+#         yes_score += 1
+
+#         image_yes = ImageTk.PhotoImage(img_yes) #ImageTk needs to be inside the root projection
+#         label_yes_img = tk.Label(master=root, image=image_yes)
+#         label_yes_img.image = image_yes         #an extra reference in order to work properly
+#         label_yes_img.place(x=600, y=130)
+
+#         label_yes_img.after(3000, lambda: label_yes_img.destroy())
+
+#         wb.save(file_name)
+
+# def no_button():
+#     global anti_repeat, no_score
+#     if anti_repeat == False:
+#         anti_repeat = True
+#         no_score += 1
+
+#         if  work_sheet.cell(row=n, column=5).value >= 2:
+#             work_sheet.cell(row=n, column=5).value = work_sheet.cell(row=n, column=5).value / 2
+
+#         help_text = tk.Text(master=root, width=40, height=3, bg='light goldenrod')
+#         help_text.place(x=120, y =360)
+#         help_text.insert(tk.END, work_sheet['G' + str(n)].value)
+
+#         help_text.after(3000, lambda: help_text.destroy())
+
+#         image_no = ImageTk.PhotoImage(img_no)
+#         label_no_img = tk.Label(master=root, image=image_no)
+#         label_no_img.image = image_no
+#         label_no_img.place(x=600, y=130)
+
+#         label_no_img.after(3000, lambda: label_no_img.destroy())
