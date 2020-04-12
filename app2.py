@@ -74,7 +74,7 @@ db_cursor.execute("select date from phrases where id=5")
 # cur_date = datetime.datetime.strptime(now, "%Y-%m-%d %H:%M:%S")
 
 # db_cursor.execute(f"update phrases set date=' where id=5")
-# db_cursor.execute("select * from phrases where id=5")
+# db_cursor.execute("select * from phrases where id=5"
 
 
 
