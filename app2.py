@@ -8,6 +8,7 @@ import mysql.connector
 import os
 from dotenv import load_dotenv
 from gui import GermanGame
+import pdb
 
 load_dotenv()
 
@@ -23,7 +24,7 @@ db = mysql.connector.connect(
 )
 
 db_cursor = db.cursor()
-db_cursor.execute("select * from phrases")
+db_cursor.execute("select * from phrases where id>10 and id<15")
 
 all_phrases = db_cursor.fetchall() #(98, 'Sein Geist', None, 0)
 phrases_counter = 1          #tracks how many phrases left, set on 1 because of excel start position on 2
@@ -37,53 +38,60 @@ def pick_a_phrase(self):
     now_str = str(unformatted_now).split(".")[0]
     now_datetime = datetime.datetime.strptime(now_str, "%Y-%m-%d %H:%M:%S")
     
-    for index, phrase in enumerate(all_phrases):
-        phrase_id = phrase[0]
+    for index, phrase in enumerate(all_phrases):        
+        phrase_id = str(phrase[0])
         phrase_text = phrase[1]
         phrase_date = phrase[2]
         phrase_frequency = phrase[3]
+        print(f"{phrase_text} :init: {phrase_id}")
 
-        if phrase_text:        
+        if phrase_text is not None:        
             if not phrase_date:
-                sql = "update phrases set date = %s and frequency=1 where id = %s"
+                sql = "update phrases set date = %s, frequency=1 where id = %s"
                 val = (now_str, phrase_id)
 
-                #db_cursor.execute(sql, val)  #if the cell doesnt have any date puts today's date
-                phrases_counter += 1
-            else:
-                date_difference = now_datetime - phrase_date
-                # #retrieve date
-                # #date gets passed from sql database as int()
-                # db_cursor.execute("select date from phrases where id=4")
-                # date = db_cursor.fetchall()[0][0]
-                # #this change it to datetime.datetime class
-                # cur_date = datetime.datetime.strptime(str(date), "%Y-%m-%d %H:%M:%S")
+                db_cursor.execute(sql, val)  #if the cell doesnt have any date puts today's date
+                db.commit()
 
+                phrases_counter += 1
+                print(f"{phrase_text} :not Date: {phrase_id}")
+            else:
+                print(phrase_date)
+                print(type(phrase_date))
+                date_difference = now_datetime - phrase_date
                 days_difference = date_difference.days #count how many days passed from the last practise
 
                 phrases_counter += 1
                 if days_difference >= phrase_frequency:  #checks frequency of practising the phrase
                     sql = "update phrases set date = %s where id = %s"
-                    val = (now, phrase_id)
+                    val = (now_str, phrase_id)
 
-                    phrase("check here ELSE")
-                    # db_cursor.execute(sql, val)  #if the cell doesnt have any date puts today's date
+                    db_cursor.execute(sql, val)  #updates date of phrase practising(now)
+                    db.commit()
+
                     phrases_counter += 1
-                    print('pass' + str(phrase_id))
+                    print(f"{phrase_text} :have date and frequency time to practise: {phrase_id}")
                     pass     #pass to the next stage
                 else:
-                    print('continue' + str(phrase_id))
-                    continue
-
+                    print(f"{phrase_text} :have date and frequency but no exercise today: {phrase_id}")
+                    all_phrases.pop(index)  
+                    continue #start next iterate
+            # pdb.set_trace()
+            print(f"{phrase_text} :main_loop: {phrase_id}")
             GermanGame.pick_phrase_gui(self, phrase_text, yes_funct, no_funct)
 
-            all_phrases.pop(index)
+            all_phrases.pop(index)  
             break
 
         else:
-            print(f"skipped {phrase_id}")
+            print(f"{phrase_text} :phrase is None: {phrase_id}")
+            all_phrases.pop(index)
             phrases_counter += 1
             continue
+    
+    if all_phrases:
+        return print(all_phrases)
+    return print("Finished")
 
 def yes_funct():
     print("works")
@@ -97,12 +105,15 @@ GermanGame(root, pick_a_phrase)
 
 root.mainloop()
 
-
+##################################################
+#ONLY TESTING
 db_cursor = db.cursor()
 
+#get max id in the table
 db_cursor.execute("select max(id) from phrases")
 max_id = db_cursor.fetchall()[0][0] #to fetch data and be able to retrieve them -> ([98, ]) -> [0][0] -> 98
 
+#get all phrases
 db_cursor.execute("select * from phrases")
 all_phrases = db_cursor.fetchall()
 
@@ -115,18 +126,25 @@ db_cursor.execute("select * from phrases where id=4")
 not_phrase = db_cursor.fetchall()
 
 #retrieve date
-#date gets passed from sql database as int()
-db_cursor.execute("select date from phrases where id=4")
-date = db_cursor.fetchall()[0][0]
-#this change it to datetime.datetime class
+#date gets passed from sql database as datetime.datetime
+db_cursor.execute("select * from phrases where id=5")
+date = db_cursor.fetchall()[0][2]
+# print(date)
+# print(type(date))
+
+#in case its different format change with this to datetime
 cur_date = datetime.datetime.strptime(str(date), "%Y-%m-%d %H:%M:%S")
+# print(cur_date)
+# print(type(cur_date))
 
 #pass date
-unformatted_now = datetime.date.today()
-now = unformatted_now.strftime('%Y-%m-%d %H:%M:%S')
+unformatted_now = datetime.datetime.now()
+now_str = str(unformatted_now).split(".")[0]
+now_datetime = datetime.datetime.strptime(now_str, "%Y-%m-%d %H:%M:%S")
 
-sql = "UPDATE phrases SET date = %s WHERE id = %s"
-val = (now, 5)
+sql = "update phrases set date = %s, frequency = 1 where id = %s"
+val = (now_str, 9)
 
-db_cursor.execute(sql, val)
-db_cursor.execute("select date from phrases where id=5")
+db_cursor.execute(sql, val)  #if the cell doesnt have any date puts today's date
+
+
