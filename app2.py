@@ -24,7 +24,7 @@ db = mysql.connector.connect(
 )
 
 db_cursor = db.cursor()
-db_cursor.execute("select * from phrases where id<13")
+db_cursor.execute("select * from phrases where id<5")
 
 all_phrases = db_cursor.fetchall() #(98, 'Sein Geist', None, 0)
 phrases_counter = 1          #tracks how many phrases left, set on 1 because of excel start position on 2
@@ -57,6 +57,7 @@ def pick_a_phrase(self):
                 # db.commit()
 
                 phrases_counter += 1
+                phrase_frequency = 1
                 print(f"{phrase_text} :not Date: {phrase_id}")
             else:
                 date_difference = now_datetime - phrase_date
@@ -79,7 +80,7 @@ def pick_a_phrase(self):
                     continue #start next iterate
             # pdb.set_trace()
             print(f"{phrase_text} :main_loop: {phrase_id}")
-            GermanGame.pick_phrase_gui(self, phrase_text, phrase_id, phrase_frequency, yes_button, no_button, yes_score, no_score)
+            GermanGame.pick_phrase_gui(self, phrase_text, phrase_id, phrase_frequency, yes_button, no_button, yes_score, no_score, delete_phrase, add_phrase)
 
             all_phrases.pop(index)  
             break
@@ -97,15 +98,14 @@ def pick_a_phrase(self):
 
 def yes_button(phrase_id, phrase_frequency):
     global anti_repeat, yes_score
-
     if anti_repeat is False:      #prevents YES button spamming with anti_repeat Boolean
         anti_repeat = True
         yes_score += 1
 
         sql = "update phrases set frequency=%s where id=%s"
         val = (phrase_frequency*2, phrase_id)
-        db_cursor.execute(sql, val)
-        db.commit()
+        # db_cursor.execute(sql, val)
+        # db.commit()
 
 def no_button(phrase_id, phrase_frequency):
     global anti_repeat, no_score
@@ -116,8 +116,17 @@ def no_button(phrase_id, phrase_frequency):
         if phrase_frequency >= 2:
             sql = "update phrases set frequency=%s where id=%s"
             val = (phrase_frequency/2, phrase_id)
-            db_cursor.execute(sql, val)
-            db.commit()
+            # db_cursor.execute(sql, val)
+            # db.commit()
+
+def delete_phrase(phrase_id):
+    sql = "delete from phrases where id=%s"
+    val = (phrase_id,)
+    # db_cursor.execute(sql, val)
+    # db.commit()
+
+def add_phrase(phrase_id):
+    print(phrase_id)
 
 
 root = tk.Tk()

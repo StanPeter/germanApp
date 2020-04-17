@@ -50,24 +50,24 @@ class GermanGame:
         root.mainloop
         
     #gui after clicking on PICK_A_PHRASE button
-    def pick_phrase_gui(self, phrase_text, phrase_id, phrase_frequency, yes, no, yes_score, no_score):
+    def pick_phrase_gui(self, phrase_text, phrase_id, phrase_frequency, yes, no, yes_score, no_score, delete, add):
         text_phrase = tk.Text(width=40, height=5, bg='light goldenrod')
         text_phrase.place(x=120, y=190)
         text_phrase.insert(tk.END, phrase_text)
 
-        button_yes = tk.Button(text='Yes', font=(15), bg='green', command=lambda:yes(phrase_id, phrase_frequency))
+        button_yes = tk.Button(text='Yes', font=(15), bg='green', command=lambda: yes(phrase_id, phrase_frequency))
         button_yes.place(x=220, y=290)
         # button_yes.bind('<Button-1>', lambda: yes(phrase_id))
 
-        button_no = tk.Button(text='No', font=(15), bg='red', command=lambda:no(phrase_id, phrase_frequency))
+        button_no = tk.Button(text='No', font=(15), bg='red', command=lambda: no(phrase_id, phrase_frequency))
         button_no.place(x=300, y=290)
         #no_button.bind('<Button-Down>', no_button)
+        #master=self.root,
+        button_delete_phrase = tk.Button(text='delete', font=(10), command=lambda: delete(phrase_id))
+        button_delete_phrase.place(x=750, y=450)
 
-        # button_delete_phrase = tk.Button(master=self.root, text='delete phrase', font=(10), command=delete_phrase)
-        # button_delete_phrase.place(x=750, y=450)
-
-        # button_add = tk.Button(master=self.root, text='add phrase', font=(10), command=add_phrase)
-        # button_add.place(x=650, y=450)
+        button_add = tk.Button(text='add phrase', font=(10), command=lambda: add(phrase_id))
+        button_add.place(x=580, y=450)
 
         # add_text = tk.Entry(master=self.root)            #not finished yet
         # add_text.place(x=480, y=450)
