@@ -33,6 +33,15 @@ anti_repeat = False          #prevents yes/no button spamming
 yes_score = 0
 no_score = 0
 
+
+#getting random value, continue tomorrow
+print(all_phrases, 'all phrases')
+a1 = list(map(lambda x: list(x), all_phrases))
+print(a1)
+b1 = list(filter(lambda x: x[0] != 4, a1))
+print(b1)
+
+
 def pick_a_phrase(self):
     global all_phrases, phrases_counter, anti_repeat
     unformatted_now = datetime.datetime.now()
@@ -41,6 +50,8 @@ def pick_a_phrase(self):
     now_datetime = datetime.datetime.strptime(now_str, "%Y-%m-%d %H:%M:%S")
     anti_repeat = False
     
+    print(all_phrases, 'all phrases')
+
     for index, phrase in enumerate(all_phrases):        
         phrase_id = str(phrase[0])
         phrase_text = phrase[1]
@@ -129,11 +140,11 @@ def add_phrase(phrase_id):
     print(phrase_id)
 
 
-root = tk.Tk()
+# root = tk.Tk()
 
-GermanGame(root, pick_a_phrase)
+# GermanGame(root, pick_a_phrase)
 
-root.mainloop()
+# root.mainloop()
 
 ##################################################
 #ONLY TESTING
