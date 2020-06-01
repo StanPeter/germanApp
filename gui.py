@@ -66,7 +66,7 @@ class GermanGame:
         button_delete_phrase = tk.Button(text='delete', font=(10), command=lambda: delete(phrase_id))
         button_delete_phrase.place(x=750, y=450)
 
-        button_add = tk.Button(text='add phrase', font=(10), command=lambda: add(phrase_id))
+        button_add = tk.Button(text='add phrase', font=(10))
         button_add.place(x=580, y=450)
 
         # add_text = tk.Entry(master=self.root)            #not finished yet
@@ -83,8 +83,8 @@ class GermanGame:
         text_no_score.place(x=883, y=30)
         text_no_score.insert(tk.END, str(no_score))
 
-    # def yes_option_gui(self):
-
+    # def add_gui(self):
+    #     self.
 
 
 # def yes_button():
